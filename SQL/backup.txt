@@ -1,0 +1,670 @@
+-- 이하는 admin권한으로 스크립트 실행
+-- system 계정에서 실행한다. 
+-- 실습의 편의를 위해 ORACLE 12C 이상의 CDB 환경에서 사용, 사용자 이름 c## 추가 */ hwi>
+DROP USER c##team4_2 CASCADE;
+CREATE USER c##team4_2 IDENTIFIED BY 1234;
+
+GRANT CONNECT, RESOURCE TO c##team4_2;
+GRANT CREATE VIEW, CREATE SYNONYM TO c##team4_2;
+GRANT UNLIMITED TABLESPACE TO c##team4_2;
+
+ALTER USER c##team4_2 ACCOUNT UNLOCK;
+--여기서부터는 마당 계정으로 접속
+conn c##team4_2/1234;
+
+
+--------------------------------------------------------
+--  파일이 생성됨 - 목요일-4월-01-2021   
+--------------------------------------------------------
+--------------------------------------------------------
+--  DDL for Sequence NOTICE_NNUM_SEQ
+--------------------------------------------------------
+
+   CREATE SEQUENCE  "C##TEAM4_2"."NOTICE_NNUM_SEQ"  MINVALUE 1 MAXVALUE 99999 INCREMENT BY 1 START WITH 141 CACHE 20 NOORDER  NOCYCLE  NOKEEP  NOSCALE  GLOBAL ;
+--------------------------------------------------------
+--  DDL for Table AUCODE
+--------------------------------------------------------
+
+  CREATE TABLE "C##TEAM4_2"."AUCODE" 
+   (	"CODE" VARCHAR2(20)
+   ) ;
+
+   COMMENT ON COLUMN "C##TEAM4_2"."AUCODE"."CODE" IS '6자리 인증코드';
+--------------------------------------------------------
+--  DDL for Table BASKET
+--------------------------------------------------------
+
+  CREATE TABLE "C##TEAM4_2"."BASKET" 
+   (	"LECTURE_TITLE" VARCHAR2(90), 
+	"MEMBER_ID" VARCHAR2(90), 
+	"CDATE" TIMESTAMP (6)
+   ) ;
+--------------------------------------------------------
+--  DDL for Table CALENDAR
+--------------------------------------------------------
+
+  CREATE TABLE "C##TEAM4_2"."CALENDAR" 
+   (	"CALENDAR_ID" NUMBER, 
+	"RDATE" VARCHAR2(40), 
+	"RTIME" VARCHAR2(40), 
+	"LECTURE_TITLE" VARCHAR2(90)
+   ) ;
+--------------------------------------------------------
+--  DDL for Table CHAPTER
+--------------------------------------------------------
+
+  CREATE TABLE "C##TEAM4_2"."CHAPTER" 
+   (	"CHAPTER_TITLE" VARCHAR2(100), 
+	"LECTURE_TITLE" VARCHAR2(90), 
+	"CHAPTER_ID" NUMBER(*,0)
+   ) ;
+--------------------------------------------------------
+--  DDL for Table LECTURE
+--------------------------------------------------------
+
+  CREATE TABLE "C##TEAM4_2"."LECTURE" 
+   (	"KINDS" VARCHAR2(10), 
+	"LECTURE_TITLE" VARCHAR2(90), 
+	"TEACHER_NICKNAME" VARCHAR2(100), 
+	"PRICE" NUMBER, 
+	"OPENDATE" DATE, 
+	"TEACHER_INTRO" VARCHAR2(300), 
+	"LECTURE_INTRO" VARCHAR2(300), 
+	"RATING" NUMBER DEFAULT 0, 
+	"TYPE" VARCHAR2(20), 
+	"MEMBER_ID" VARCHAR2(90), 
+	"CLOSEDATE" VARCHAR2(20), 
+	"HOURS" VARCHAR2(20), 
+	"COUNT" VARCHAR2(20) DEFAULT 0, 
+	"LOCATION" VARCHAR2(90), 
+	"INTRO" CLOB, 
+	"AMOUNT" NUMBER DEFAULT 999999999
+   ) ;
+
+   COMMENT ON COLUMN "C##TEAM4_2"."LECTURE"."KINDS" IS '강의카테고리';
+   COMMENT ON COLUMN "C##TEAM4_2"."LECTURE"."LECTURE_TITLE" IS '강의이름';
+   COMMENT ON COLUMN "C##TEAM4_2"."LECTURE"."TEACHER_NICKNAME" IS '강사닉네임';
+   COMMENT ON COLUMN "C##TEAM4_2"."LECTURE"."PRICE" IS '강의가격';
+   COMMENT ON COLUMN "C##TEAM4_2"."LECTURE"."OPENDATE" IS '오픈일(시작일시)';
+   COMMENT ON COLUMN "C##TEAM4_2"."LECTURE"."TEACHER_INTRO" IS '강사소개';
+   COMMENT ON COLUMN "C##TEAM4_2"."LECTURE"."LECTURE_INTRO" IS '강의소개';
+   COMMENT ON COLUMN "C##TEAM4_2"."LECTURE"."RATING" IS '별점';
+   COMMENT ON COLUMN "C##TEAM4_2"."LECTURE"."TYPE" IS '강의타입(on,off)';
+   COMMENT ON COLUMN "C##TEAM4_2"."LECTURE"."MEMBER_ID" IS '강사아이디';
+   COMMENT ON COLUMN "C##TEAM4_2"."LECTURE"."CLOSEDATE" IS '종료일시';
+   COMMENT ON COLUMN "C##TEAM4_2"."LECTURE"."HOURS" IS '강의시간';
+   COMMENT ON COLUMN "C##TEAM4_2"."LECTURE"."COUNT" IS '인원';
+   COMMENT ON COLUMN "C##TEAM4_2"."LECTURE"."LOCATION" IS '강의지역';
+--------------------------------------------------------
+--  DDL for Table MEMBER
+--------------------------------------------------------
+
+  CREATE TABLE "C##TEAM4_2"."MEMBER" 
+   (	"MEMBER_ID" VARCHAR2(40), 
+	"NAME" VARCHAR2(20), 
+	"PW" VARCHAR2(10), 
+	"TEL" VARCHAR2(13), 
+	"NICKNAME" VARCHAR2(30), 
+	"GENDER" CHAR(3), 
+	"JOB" VARCHAR2(30), 
+	"REGION" VARCHAR2(160), 
+	"BIRTH" DATE, 
+	"CDATE" TIMESTAMP (6), 
+	"UDATE" TIMESTAMP (6), 
+	"TYPE" VARCHAR2(9), 
+	"THUMBNAIL" VARCHAR2(100)
+   ) ;
+--------------------------------------------------------
+--  DDL for Table NOTICE
+--------------------------------------------------------
+
+  CREATE TABLE "C##TEAM4_2"."NOTICE" 
+   (	"NNUM" NUMBER(10,0), 
+	"NTITLE" VARCHAR2(150), 
+	"NID" VARCHAR2(40), 
+	"NNICKNAME" VARCHAR2(30), 
+	"NCDATE" TIMESTAMP (6) DEFAULT systimestamp, 
+	"NUDATE" TIMESTAMP (6) DEFAULT systimestamp, 
+	"NHIT" NUMBER(5,0) DEFAULT 0, 
+	"NCONTENT" CLOB, 
+	"NCATEGORY" NUMBER(10,0)
+   ) ;
+
+   COMMENT ON COLUMN "C##TEAM4_2"."NOTICE"."NNUM" IS '공지사항번호';
+   COMMENT ON COLUMN "C##TEAM4_2"."NOTICE"."NTITLE" IS '제목';
+   COMMENT ON COLUMN "C##TEAM4_2"."NOTICE"."NID" IS '작성자ID';
+   COMMENT ON COLUMN "C##TEAM4_2"."NOTICE"."NNICKNAME" IS '별칭';
+   COMMENT ON COLUMN "C##TEAM4_2"."NOTICE"."NCDATE" IS '작성일';
+   COMMENT ON COLUMN "C##TEAM4_2"."NOTICE"."NUDATE" IS '수정일';
+   COMMENT ON COLUMN "C##TEAM4_2"."NOTICE"."NHIT" IS '조회수';
+   COMMENT ON COLUMN "C##TEAM4_2"."NOTICE"."NCONTENT" IS '본문내용';
+   COMMENT ON COLUMN "C##TEAM4_2"."NOTICE"."NCATEGORY" IS '분류카테고리';
+--------------------------------------------------------
+--  DDL for Table NOTICE_CATEGORY
+--------------------------------------------------------
+
+  CREATE TABLE "C##TEAM4_2"."NOTICE_CATEGORY" 
+   (	"CID" NUMBER(4,0), 
+	"CNAME" VARCHAR2(60), 
+	"USE_YN" CHAR(1)
+   ) ;
+
+   COMMENT ON COLUMN "C##TEAM4_2"."NOTICE_CATEGORY"."CID" IS '분류코드';
+   COMMENT ON COLUMN "C##TEAM4_2"."NOTICE_CATEGORY"."CNAME" IS '분류명';
+   COMMENT ON COLUMN "C##TEAM4_2"."NOTICE_CATEGORY"."USE_YN" IS '사용유무(y,n)';
+--------------------------------------------------------
+--  DDL for Table NOTICE_UPLOAD_FILE
+--------------------------------------------------------
+
+  CREATE TABLE "C##TEAM4_2"."NOTICE_UPLOAD_FILE" 
+   (	"FID" NUMBER(10,0), 
+	"NNUM" NUMBER(10,0), 
+	"FNAME" VARCHAR2(150), 
+	"FSIZE" VARCHAR2(45), 
+	"FTYPE" VARCHAR2(100), 
+	"CDATE" TIMESTAMP (6) DEFAULT systimestamp, 
+	"UDATE" TIMESTAMP (6) DEFAULT systimestamp, 
+	"FDATA" BLOB
+   ) ;
+
+   COMMENT ON COLUMN "C##TEAM4_2"."NOTICE_UPLOAD_FILE"."FID" IS '파일아이디';
+   COMMENT ON COLUMN "C##TEAM4_2"."NOTICE_UPLOAD_FILE"."NNUM" IS '공지사항 게시글 번호';
+   COMMENT ON COLUMN "C##TEAM4_2"."NOTICE_UPLOAD_FILE"."FNAME" IS '파일명';
+   COMMENT ON COLUMN "C##TEAM4_2"."NOTICE_UPLOAD_FILE"."FSIZE" IS '파일크기';
+   COMMENT ON COLUMN "C##TEAM4_2"."NOTICE_UPLOAD_FILE"."FTYPE" IS '파일유형';
+   COMMENT ON COLUMN "C##TEAM4_2"."NOTICE_UPLOAD_FILE"."CDATE" IS '작성일';
+   COMMENT ON COLUMN "C##TEAM4_2"."NOTICE_UPLOAD_FILE"."UDATE" IS '수정일';
+   COMMENT ON COLUMN "C##TEAM4_2"."NOTICE_UPLOAD_FILE"."FDATA" IS '첨부파일';
+--------------------------------------------------------
+--  DDL for Table ORDERS
+--------------------------------------------------------
+
+  CREATE TABLE "C##TEAM4_2"."ORDERS" 
+   (	"ORDER_ID" NUMBER, 
+	"STATUS" VARCHAR2(20), 
+	"UDATE" TIMESTAMP (6), 
+	"MEMBER_ID" VARCHAR2(40), 
+	"LECTURE_TITLE" VARCHAR2(90), 
+	"PROGRESSBAR" NUMBER DEFAULT 0, 
+	"STUDYDATE" TIMESTAMP (6), 
+	"ORDERDATE" TIMESTAMP (6), 
+	"CANCELDATE" TIMESTAMP (6)
+   ) ;
+--------------------------------------------------------
+--  DDL for Table PROGRESS
+--------------------------------------------------------
+
+  CREATE TABLE "C##TEAM4_2"."PROGRESS" 
+   (	"LECTURE_TITLE" VARCHAR2(90), 
+	"MEMBER_ID" VARCHAR2(90), 
+	"VIDEO_ID" NUMBER, 
+	"PROGRESS" NUMBER DEFAULT 0, 
+	"STUDYDATE" TIMESTAMP (6)
+   ) ;
+--------------------------------------------------------
+--  DDL for Table QNA
+--------------------------------------------------------
+
+  CREATE TABLE "C##TEAM4_2"."QNA" 
+   (	"QNA_NUM" NUMBER(10,0), 
+	"TITLE" VARCHAR2(150), 
+	"CONTENT" CLOB, 
+	"QGROUP" NUMBER(5,0), 
+	"QSTEP" NUMBER(5,0), 
+	"QINDENT" NUMBER(5,0), 
+	"LECTURE_TITLE" VARCHAR2(90), 
+	"NICKNAME" VARCHAR2(40), 
+	"CDATE" TIMESTAMP (6), 
+	"UDATE" TIMESTAMP (6)
+   ) ;
+--------------------------------------------------------
+--  DDL for Table QNA_UPLOAD_FILE
+--------------------------------------------------------
+
+  CREATE TABLE "C##TEAM4_2"."QNA_UPLOAD_FILE" 
+   (	"FID" NUMBER, 
+	"FSIZE" VARCHAR2(45), 
+	"FTYPE" VARCHAR2(50), 
+	"FNAME" VARCHAR2(20), 
+	"CDATE" TIMESTAMP (6), 
+	"UDATE" TIMESTAMP (6), 
+	"PIC" BLOB, 
+	"QNA_NUM" NUMBER
+   ) ;
+--------------------------------------------------------
+--  DDL for Table RESERVATION
+--------------------------------------------------------
+
+  CREATE TABLE "C##TEAM4_2"."RESERVATION" 
+   (	"RESERVE_ID" VARCHAR2(40), 
+	"STATUS" VARCHAR2(40), 
+	"CDATE" VARCHAR2(20), 
+	"CANCELDATE" VARCHAR2(20), 
+	"MEMBER_ID" VARCHAR2(40), 
+	"CALENDAR_ID" VARCHAR2(20)
+   ) ;
+--------------------------------------------------------
+--  DDL for Table REVIEW
+--------------------------------------------------------
+
+  CREATE TABLE "C##TEAM4_2"."REVIEW" 
+   (	"REVIEW_ID" NUMBER, 
+	"RCONTENT" VARCHAR2(500), 
+	"RATING" NUMBER, 
+	"CDATE" TIMESTAMP (6), 
+	"UDATE" TIMESTAMP (6), 
+	"MEMBER_ID" VARCHAR2(40), 
+	"LECTURE_TITLE" VARCHAR2(90)
+   ) ;
+--------------------------------------------------------
+--  DDL for Table VIDEO
+--------------------------------------------------------
+
+  CREATE TABLE "C##TEAM4_2"."VIDEO" 
+   (	"VIDEO_ID" NUMBER, 
+	"TITLE" VARCHAR2(90), 
+	"CONTENT" VARCHAR2(500), 
+	"CDATE" TIMESTAMP (6), 
+	"UDATE" TIMESTAMP (6), 
+	"LECTURE_TITLE" VARCHAR2(90), 
+	"FILENAME" VARCHAR2(100), 
+	"SECRET" CHAR(1), 
+	"CHAPTER_ID" NUMBER(*,0)
+   ) 
+  NO INMEMORY ("CHAPTER_ID") ;
+--------------------------------------------------------
+--  DDL for Table WISH
+--------------------------------------------------------
+
+  CREATE TABLE "C##TEAM4_2"."WISH" 
+   (	"MEMBER_ID" VARCHAR2(90), 
+	"LECTURE_TITLE" VARCHAR2(90), 
+	"UDATE" TIMESTAMP (6)
+   ) ;
+REM INSERTING into C##TEAM4_2.AUCODE
+SET DEFINE OFF;
+REM INSERTING into C##TEAM4_2.BASKET
+SET DEFINE OFF;
+REM INSERTING into C##TEAM4_2.CALENDAR
+SET DEFINE OFF;
+REM INSERTING into C##TEAM4_2.CHAPTER
+SET DEFINE OFF;
+REM INSERTING into C##TEAM4_2.LECTURE
+SET DEFINE OFF;
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it','파이썬 입문 오리지널','테스트2',200000,to_date('21/02/17','RR/MM/DD'),'테스트2','파이썬파이썬파이썬파이썬파이썬파이썬파이썬파이썬파이썬',3,'on','teacher2@test.com',null,null,'0',null,9999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it','자바','투슬리스',20000,to_date('21/01/03','RR/MM/DD'),'안녕','안녕',3.41666666666666666666666666666666666667,'on','teacher3@test.com',null,null,'0',null,9999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it2','자바2','투슬리스2',20000,to_date('21/01/03','RR/MM/DD'),'안녕2','안녕2',2.66666666666666666666666666666666666667,'off','teacher4@test.com',null,null,'1',null,10);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it','dsa','d',10000,to_date('21/02/11','RR/MM/DD'),'d','d',1,'on','teacher5@test.com',null,null,'0',null,9999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it','dasd','asdad',10000,to_date('21/02/12','RR/MM/DD'),'d','d',0,'on','teacher6@test.com',null,null,'0',null,9999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it','asd','asd',10000,to_date('21/02/11','RR/MM/DD'),'asd','asd',5,'on','teacher7@test.com',null,null,'0',null,9999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it','자바 실전','asdad',20000,to_date('21/02/18','RR/MM/DD'),'sad','실무에서 자주 쓰이는 실전 자바 강의입니다.',4,'on','teacher6@test.com',null,null,'0',null,9999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it','HTML/CSS 1','d',10000,to_date('21/02/11','RR/MM/DD'),'d','d',1,'off','kimilsung@test.com',null,null,'4','서울',50);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it','HTML/CSS 2','asdad',10000,to_date('21/02/12','RR/MM/DD'),'d','d',0,'off','kimilsung@test.com',null,null,'1','서울',10);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it','데이터베이스 입문','asd',10000,to_date('21/02/11','RR/MM/DD'),'asd','asd',5,'off','hoondong@test.com',null,null,'0','울산',10);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it','실전 자바 스터디','정동훈',20000,to_date('21/02/18','RR/MM/DD'),'KH정보교육원 출신 스타강사','실무에서 자주 쓰이는 실전 자바 강의입니다.',4,'off','hoondong@test.com',null,null,'30','부산',30);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('art','림쑤홍의 커피철학','림쑤홍',50000000,to_date('21/03/15','RR/MM/DD'),'부경대 바리스타학과','그대의 커피향기 속으로 ...',5,'off','limsuhong@test.com',null,null,'0','울산광역시 옥동',15);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('art','팽수의 그림교실','김명중',350000,to_date('21/03/01','RR/MM/DD'),'EBS 사장','팽수가 한국에서 그림을 그립니다 참 쉽죠 ?',5,'off','pangpang@test.com',null,null,'20','울산',25);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('art','팽수의 노래교실','김명중',150000,to_date('21/03/08','RR/MM/DD'),'EBS 사장','팽수가 남극의 추위에서 소리 지르며 터득한 고음 발라드 !',2,'off','pangpang@test.com',null,null,'15','서울',15);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it','데이터베이스 기초','정동훈',20000,to_date('21/02/18','RR/MM/DD'),'KH정보교육원 출신 스타강사','데이터 베이스의 기초',5,'off','hoondong@test.com',null,null,'30','울산 남구 삼산로35번길 19',30);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('art','주식 투자','김명중',150000,to_date('21/03/08','RR/MM/DD'),'EBS 사장','주식 투자의 기초에 대하여 ~',3,'off','pangpang@test.com',null,null,'8','서울',10);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it','자바 마스터 과정','정동훈',20000,to_date('21/02/18','RR/MM/DD'),'KH정보교육원 출신 스타강사','자바 기초부터 취업까지 ~ ',5,'off','hoondong@test.com',null,null,'30','울산 남구 삼산로35번길 19',50);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it','웹개발 입문자 과정','김강사',500000,to_date('21/03/01','RR/MM/DD'),'서울대학교 컴퓨터공학부 졸업 마이크로소프트 개발자입니다.','자바로 개발된 웹서비스가 많습니다 스프링으로 모두 같이 웹 개발합시다.',4,'on','gangsa@test.com',null,null,'0','인천',999999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it','안드로이드 앱 개발','김강사',1200000,to_date('21/03/01','RR/MM/DD'),'서울대학교 컴퓨터공학부 졸업 마이크로소프트 개발자입니다.','코틀린으로 안드로이드 어플 개발',5,'on','gangsa@test.com',null,null,'0',null,999999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it','임수홍의 웹클론코딩','림쑤홍',500000,to_date('21/03/15','RR/MM/DD'),'부경대 바리스타학과','임수홍의 실전 웹 클론코딩 ',5,'off','limsuhong@test.com',null,null,'0','인천',15);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it','임수홍의 프론트교실6','임수홍',20000,to_date('21/03/09','RR/MM/DD'),'프론트 원챔입니다.','5분만 보면 프론트의 신이 됩니다.',5,'on',null,null,null,'0',null,999999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it','임수홍의 프론트교실2','임수홍',20000,to_date('21/02/02','RR/MM/DD'),'프론트 원챔입니다.','5분만 보면 프론트의 신이 됩니다.',2,'on',null,null,null,'0',null,999999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it','임수홍의 프론트교실3','임수홍',20000,to_date('21/02/03','RR/MM/DD'),'프론트 원챔입니다.','5분만 보면 프론트의 신이 됩니다.',3,'on',null,null,null,'0',null,999999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it','임수홍의 프론트교실4','임수홍',20000,to_date('21/02/04','RR/MM/DD'),'프론트 원챔입니다.','5분만 보면 프론트의 신이 됩니다.',4,'on',null,null,null,'0',null,999999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it','임수홍의 프론트교실5','임수홍',20000,to_date('21/02/06','RR/MM/DD'),'프론트 원챔입니다.','5분만 보면 프론트의 신이 됩니다.',5,'on',null,null,null,'0',null,999999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('finance','임수홍의 금융교실1','임수금',15000,to_date('21/02/01','RR/MM/DD'),'비트코인 원챔입니다.','5분만 보면 코인의 신이됩니다.',1,'on',null,null,null,'0',null,999999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('finance','임수홍의 금융교실2','임수금',15000,to_date('21/02/13','RR/MM/DD'),'비트코인 원챔입니다.','5분만 보면 코인의 신이됩니다.',1,'on',null,null,null,'0',null,999999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('finance','임수홍의 금융교실3','임수금',17000,to_date('21/02/24','RR/MM/DD'),'비트코인 원챔입니다.','5분만 보면 코인의 신이됩니다.',2,'on',null,null,null,'0',null,999999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('finance','임수홍의 금융교실4','임수금',18000,to_date('21/02/27','RR/MM/DD'),'비트코인 원챔입니다.','5분만 보면 코인의 신이됩니다.',4,'on',null,null,null,'0',null,999999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('finance','임수홍의 금융교실5','임수금',15000,to_date('21/02/28','RR/MM/DD'),'비트코인 원챔입니다.','5분만 보면 코인의 신이됩니다.',5,'on',null,null,null,'0',null,999999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('fitness','임수홍의 체육교실1','임수영',20000,to_date('21/02/28','RR/MM/DD'),'수영 원챔입니다.','5분만 보면 코인의 신이됩니다.',2,'on',null,null,null,'0',null,999999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('fitness','임수홍의 체육교실2','임수영',20000,to_date('21/02/20','RR/MM/DD'),'수영 원챔입니다.','5분만 보면 코인의 신이됩니다.',2,'on',null,null,null,'0',null,999999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('fitness','임수홍의 체육교실3','임수영',20000,to_date('21/02/10','RR/MM/DD'),'수영 원챔입니다.','5분만 보면 코인의 신이됩니다.',2,'on',null,null,null,'0',null,999999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('it','임수홍의 프론트교실','임수홍',20000,to_date('21/01/01','RR/MM/DD'),'프론트 원챔입니다.','5분만 보면 프론트의 신이 됩니다.',1,'on',null,null,null,'0',null,999999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('fitness','임수홍의 체육교실4','임수영',20000,to_date('21/02/10','RR/MM/DD'),'수영 원챔입니다.','5분만 보면 코인의 신이됩니다.',2,'on',null,null,null,'0',null,999999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('creation','임수작의 창작교실1','임수작',20000,to_date('21/02/26','RR/MM/DD'),'창작 장인입니다.','5분만 보면 창작의 마스터',3,'on',null,null,null,'0',null,999999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('creation','임수작의 창작교실2','임수작',20000,to_date('21/02/15','RR/MM/DD'),'창작 장인입니다.','5분만 보면 창작의 마스터',2,'on',null,null,null,'0',null,999999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('creation','임수작의 창작교실3','임수작',20000,to_date('21/02/06','RR/MM/DD'),'창작 장인입니다.','5분만 보면 창작의 마스터',4,'on',null,null,null,'0',null,999999999);
+Insert into C##TEAM4_2.LECTURE (KINDS,LECTURE_TITLE,TEACHER_NICKNAME,PRICE,OPENDATE,TEACHER_INTRO,LECTURE_INTRO,RATING,TYPE,MEMBER_ID,CLOSEDATE,HOURS,COUNT,LOCATION,AMOUNT) values ('creation','임수작의 창작교실4','임수작',20000,to_date('21/02/01','RR/MM/DD'),'창작 장인입니다.','5분만 보면 창작의 마스터',5,'on',null,null,null,'0',null,999999999);
+REM INSERTING into C##TEAM4_2.MEMBER
+SET DEFINE OFF;
+Insert into C##TEAM4_2.MEMBER (MEMBER_ID,NAME,PW,TEL,NICKNAME,GENDER,JOB,REGION,BIRTH,CDATE,UDATE,TYPE,THUMBNAIL) values ('teacher2@test.com','테스트2','1234','010-2222-2223','테스트2',null,null,'울산',null,null,null,'강사',null);
+Insert into C##TEAM4_2.MEMBER (MEMBER_ID,NAME,PW,TEL,NICKNAME,GENDER,JOB,REGION,BIRTH,CDATE,UDATE,TYPE,THUMBNAIL) values ('student1@test.com','정가희','1234','010-1111-1111','학생1',null,null,'울산',null,null,null,'수강생',null);
+Insert into C##TEAM4_2.MEMBER (MEMBER_ID,NAME,PW,TEL,NICKNAME,GENDER,JOB,REGION,BIRTH,CDATE,UDATE,TYPE,THUMBNAIL) values ('teacher1@test.com','김민수','1234','010-1111-1112','강사1',null,null,'울산',null,null,null,'강사',null);
+Insert into C##TEAM4_2.MEMBER (MEMBER_ID,NAME,PW,TEL,NICKNAME,GENDER,JOB,REGION,BIRTH,CDATE,UDATE,TYPE,THUMBNAIL) values ('test@test.com','정가희','1234','010-1111-1119','가희',null,null,'울산',null,null,null,'수강생',null);
+Insert into C##TEAM4_2.MEMBER (MEMBER_ID,NAME,PW,TEL,NICKNAME,GENDER,JOB,REGION,BIRTH,CDATE,UDATE,TYPE,THUMBNAIL) values ('admin1@test.com','안재길','admin1234','010-1111-1113','관리자1','남',null,'울산',null,null,null,'관리자',null);
+Insert into C##TEAM4_2.MEMBER (MEMBER_ID,NAME,PW,TEL,NICKNAME,GENDER,JOB,REGION,BIRTH,CDATE,UDATE,TYPE,THUMBNAIL) values ('teacher3@test.com','선생','1234','010-2222-2222','선생3',null,null,'울산',null,null,null,'강사',null);
+Insert into C##TEAM4_2.MEMBER (MEMBER_ID,NAME,PW,TEL,NICKNAME,GENDER,JOB,REGION,BIRTH,CDATE,UDATE,TYPE,THUMBNAIL) values ('test5@test.com','김관리','1234','010-1111-1111','관리자2','남',null,'울산',null,null,null,'관리자',null);
+REM INSERTING into C##TEAM4_2.NOTICE
+SET DEFINE OFF;
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (121,'저는 이벤트 입니다.','test5@test.com','관리자2',to_timestamp('21/03/31 13:58:46.151000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/31 13:58:46.151000000','RR/MM/DD HH24:MI:SSXFF'),1,1020);
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (42,'창세기게시글ju생성테스트3','test5@test.com','관리자2',to_timestamp('21/03/17 18:55:09.657000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/17 18:55:09.657000000','RR/MM/DD HH24:MI:SSXFF'),9,1010);
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (1,'임수홍 강사 은퇴','test5@test.com','관리자',to_timestamp('21/03/11 16:17:20.261591000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/11 16:17:44.137000000','RR/MM/DD HH24:MI:SSXFF'),8,1010);
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (34,'ㅇㅇ',null,null,to_timestamp('21/03/17 15:30:08.691000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/17 15:30:08.691000000','RR/MM/DD HH24:MI:SSXFF'),10,1020);
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (45,'ddddd','test5@test.com','관리자',to_timestamp('21/03/18 10:49:52.125000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/18 10:49:52.125000000','RR/MM/DD HH24:MI:SSXFF'),6,1010);
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (46,'ck에디터로 작성한글11','test5@test.com','관리자',to_timestamp('21/03/18 11:09:10.665000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/18 11:09:10.665000000','RR/MM/DD HH24:MI:SSXFF'),16,1010);
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (48,'ㅗ솟','test5@test.com','관리자',to_timestamp('21/03/18 11:23:03.075000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/18 11:23:03.075000000','RR/MM/DD HH24:MI:SSXFF'),3,1010);
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (49,'[원글]ck에디터로 쓴글 21','test5@test.com','관리자',to_timestamp('21/03/18 12:15:23.521000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/30 14:40:26.278000000','RR/MM/DD HH24:MI:SSXFF'),8,1020);
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (50,'ddd','test5@test.com','관리자',to_timestamp('21/03/18 12:16:17.118000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/18 12:16:17.118000000','RR/MM/DD HH24:MI:SSXFF'),0,1020);
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (41,'게시글ju생성테스트2','test5@test.com','관리자2',to_timestamp('21/03/17 18:06:35.162000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/17 18:06:35.162000000','RR/MM/DD HH24:MI:SSXFF'),0,1010);
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (31,'ㄹㄹㄹ','test5@test.com','관리자',to_timestamp('21/03/17 15:01:54.261000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/17 15:01:54.261000000','RR/MM/DD HH24:MI:SSXFF'),6,1020);
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (32,'스마트에디터로 쓴글','test5@test.com','관리자',to_timestamp('21/03/17 15:07:46.012000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/17 15:07:46.012000000','RR/MM/DD HH24:MI:SSXFF'),5,1010);
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (33,'ㄱㅎㄱㄷㅎㄱㅎ','test5@test.com','관리자',to_timestamp('21/03/17 15:22:49.017000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/17 15:22:49.017000000','RR/MM/DD HH24:MI:SSXFF'),2,1010);
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (35,'ddd','test5@test.com','관리자',to_timestamp('21/03/17 15:30:48.367000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/17 15:30:48.367000000','RR/MM/DD HH24:MI:SSXFF'),0,1010);
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (36,'1111111111111','test5@test.com','관리자',to_timestamp('21/03/17 15:31:08.917000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/17 15:31:08.917000000','RR/MM/DD HH24:MI:SSXFF'),0,1020);
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (37,'sadsafawefasf','test5@test.com','관리자',to_timestamp('21/03/17 16:06:54.846000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/17 16:06:54.846000000','RR/MM/DD HH24:MI:SSXFF'),1,1010);
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (29,'ㅇㅇㅇㅇ','test5@test.com','관리자',to_timestamp('21/03/17 14:29:00.429000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/17 14:29:00.429000000','RR/MM/DD HH24:MI:SSXFF'),0,1010);
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (30,'ㅇㅇㅇㅇ','test5@test.com','관리자',to_timestamp('21/03/17 14:30:31.871000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/17 14:30:31.871000000','RR/MM/DD HH24:MI:SSXFF'),2,1010);
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (44,'juit생성테스트3','test5@test.com','관리자2',to_timestamp('21/03/18 10:36:12.383000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/18 10:36:12.383000000','RR/MM/DD HH24:MI:SSXFF'),1,1010);
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (43,'창세기게시글ju생성테스트3','test5@test.com','관리자2',to_timestamp('21/03/18 10:35:58.853000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/18 10:35:58.853000000','RR/MM/DD HH24:MI:SSXFF'),1,1010);
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (102,'[원글][원글]프로젝트 통합후 게시글 테스트2','test5@test.com','관리자2',to_timestamp('21/03/29 17:58:17.812000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/31 13:58:18.548000000','RR/MM/DD HH24:MI:SSXFF'),27,1010);
+Insert into C##TEAM4_2.NOTICE (NNUM,NTITLE,NID,NNICKNAME,NCDATE,NUDATE,NHIT,NCATEGORY) values (103,'프로젝트 통합후 게시글 테스트3 이벤트로 가라','test5@test.com','관리자2',to_timestamp('21/03/29 17:58:37.123000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/29 17:58:37.123000000','RR/MM/DD HH24:MI:SSXFF'),1,1020);
+REM INSERTING into C##TEAM4_2.NOTICE_CATEGORY
+SET DEFINE OFF;
+Insert into C##TEAM4_2.NOTICE_CATEGORY (CID,CNAME,USE_YN) values (1010,'공지사항','y');
+Insert into C##TEAM4_2.NOTICE_CATEGORY (CID,CNAME,USE_YN) values (1020,'이벤트','y');
+REM INSERTING into C##TEAM4_2.NOTICE_UPLOAD_FILE
+SET DEFINE OFF;
+REM INSERTING into C##TEAM4_2.ORDERS
+SET DEFINE OFF;
+Insert into C##TEAM4_2.ORDERS (ORDER_ID,STATUS,UDATE,MEMBER_ID,LECTURE_TITLE,PROGRESSBAR,STUDYDATE,ORDERDATE,CANCELDATE) values (181,'구매완료',to_timestamp('21/03/24 15:16:13.963000000','RR/MM/DD HH24:MI:SSXFF'),'student1@test.com','자바',0,null,to_timestamp('21/03/24 15:16:13.963000000','RR/MM/DD HH24:MI:SSXFF'),null);
+Insert into C##TEAM4_2.ORDERS (ORDER_ID,STATUS,UDATE,MEMBER_ID,LECTURE_TITLE,PROGRESSBAR,STUDYDATE,ORDERDATE,CANCELDATE) values (182,'구매완료',to_timestamp('21/03/24 15:16:13.963000000','RR/MM/DD HH24:MI:SSXFF'),'student1@test.com','파이썬 입문 오리지널',0,null,to_timestamp('21/03/24 15:16:13.963000000','RR/MM/DD HH24:MI:SSXFF'),null);
+REM INSERTING into C##TEAM4_2.PROGRESS
+SET DEFINE OFF;
+Insert into C##TEAM4_2.PROGRESS (LECTURE_TITLE,MEMBER_ID,VIDEO_ID,PROGRESS,STUDYDATE) values ('자바','student1@test.com',65,0,null);
+Insert into C##TEAM4_2.PROGRESS (LECTURE_TITLE,MEMBER_ID,VIDEO_ID,PROGRESS,STUDYDATE) values ('자바','student1@test.com',66,0,null);
+Insert into C##TEAM4_2.PROGRESS (LECTURE_TITLE,MEMBER_ID,VIDEO_ID,PROGRESS,STUDYDATE) values ('자바','student1@test.com',67,0,null);
+Insert into C##TEAM4_2.PROGRESS (LECTURE_TITLE,MEMBER_ID,VIDEO_ID,PROGRESS,STUDYDATE) values ('파이썬 입문 오리지널','student1@test.com',31,0,null);
+Insert into C##TEAM4_2.PROGRESS (LECTURE_TITLE,MEMBER_ID,VIDEO_ID,PROGRESS,STUDYDATE) values ('파이썬 입문 오리지널','student1@test.com',32,0,null);
+Insert into C##TEAM4_2.PROGRESS (LECTURE_TITLE,MEMBER_ID,VIDEO_ID,PROGRESS,STUDYDATE) values ('파이썬 입문 오리지널','student1@test.com',33,0,null);
+Insert into C##TEAM4_2.PROGRESS (LECTURE_TITLE,MEMBER_ID,VIDEO_ID,PROGRESS,STUDYDATE) values ('파이썬 입문 오리지널','student1@test.com',34,0,null);
+Insert into C##TEAM4_2.PROGRESS (LECTURE_TITLE,MEMBER_ID,VIDEO_ID,PROGRESS,STUDYDATE) values ('자바','student1@test.com',61,0,null);
+Insert into C##TEAM4_2.PROGRESS (LECTURE_TITLE,MEMBER_ID,VIDEO_ID,PROGRESS,STUDYDATE) values ('자바','student1@test.com',62,0,null);
+REM INSERTING into C##TEAM4_2.QNA
+SET DEFINE OFF;
+Insert into C##TEAM4_2.QNA (QNA_NUM,TITLE,QGROUP,QSTEP,QINDENT,LECTURE_TITLE,NICKNAME,CDATE,UDATE) values (1,'테스트1',1,1,null,'자바','투슬리스',to_timestamp('21/02/18 15:06:14.000000000','RR/MM/DD HH24:MI:SSXFF'),null);
+Insert into C##TEAM4_2.QNA (QNA_NUM,TITLE,QGROUP,QSTEP,QINDENT,LECTURE_TITLE,NICKNAME,CDATE,UDATE) values (2,'커리큘럼 관련1',1,1,null,'자바','투슬리스',to_timestamp('21/02/18 15:07:04.000000000','RR/MM/DD HH24:MI:SSXFF'),null);
+REM INSERTING into C##TEAM4_2.QNA_UPLOAD_FILE
+SET DEFINE OFF;
+REM INSERTING into C##TEAM4_2.RESERVATION
+SET DEFINE OFF;
+REM INSERTING into C##TEAM4_2.REVIEW
+SET DEFINE OFF;
+Insert into C##TEAM4_2.REVIEW (REVIEW_ID,RCONTENT,RATING,CDATE,UDATE,MEMBER_ID,LECTURE_TITLE) values (261,'dddddd',3,to_timestamp('21/02/16 18:40:47.000000000','RR/MM/DD HH24:MI:SSXFF'),null,null,'자바');
+Insert into C##TEAM4_2.REVIEW (REVIEW_ID,RCONTENT,RATING,CDATE,UDATE,MEMBER_ID,LECTURE_TITLE) values (262,'테스트',5,to_timestamp('21/02/16 18:55:08.000000000','RR/MM/DD HH24:MI:SSXFF'),null,null,'자바 실전');
+Insert into C##TEAM4_2.REVIEW (REVIEW_ID,RCONTENT,RATING,CDATE,UDATE,MEMBER_ID,LECTURE_TITLE) values (263,'테스트2',5,to_timestamp('21/02/16 18:56:21.000000000','RR/MM/DD HH24:MI:SSXFF'),null,null,'자바');
+Insert into C##TEAM4_2.REVIEW (REVIEW_ID,RCONTENT,RATING,CDATE,UDATE,MEMBER_ID,LECTURE_TITLE) values (321,'진짜 못해먹겠다',3,to_timestamp('21/03/16 16:06:26.000000000','RR/MM/DD HH24:MI:SSXFF'),null,null,'자바');
+Insert into C##TEAM4_2.REVIEW (REVIEW_ID,RCONTENT,RATING,CDATE,UDATE,MEMBER_ID,LECTURE_TITLE) values (323,'개힘들다',4,to_timestamp('21/03/16 16:17:55.000000000','RR/MM/DD HH24:MI:SSXFF'),null,null,'자바');
+Insert into C##TEAM4_2.REVIEW (REVIEW_ID,RCONTENT,RATING,CDATE,UDATE,MEMBER_ID,LECTURE_TITLE) values (341,'dasd',3,to_timestamp('21/03/17 10:58:57.000000000','RR/MM/DD HH24:MI:SSXFF'),null,'test@test.com','자바');
+Insert into C##TEAM4_2.REVIEW (REVIEW_ID,RCONTENT,RATING,CDATE,UDATE,MEMBER_ID,LECTURE_TITLE) values (322,'4시 12분',3,to_timestamp('21/03/16 16:12:49.000000000','RR/MM/DD HH24:MI:SSXFF'),null,null,'자바');
+Insert into C##TEAM4_2.REVIEW (REVIEW_ID,RCONTENT,RATING,CDATE,UDATE,MEMBER_ID,LECTURE_TITLE) values (327,'머선일이고',3,to_timestamp('21/03/16 16:30:04.000000000','RR/MM/DD HH24:MI:SSXFF'),null,'student1@test.com','자바');
+Insert into C##TEAM4_2.REVIEW (REVIEW_ID,RCONTENT,RATING,CDATE,UDATE,MEMBER_ID,LECTURE_TITLE) values (189,'dasd',3,to_timestamp('21/02/14 19:54:46.000000000','RR/MM/DD HH24:MI:SSXFF'),null,null,'자바 실전');
+Insert into C##TEAM4_2.REVIEW (REVIEW_ID,RCONTENT,RATING,CDATE,UDATE,MEMBER_ID,LECTURE_TITLE) values (328,'개빡친다',3,to_timestamp('21/03/16 16:37:51.000000000','RR/MM/DD HH24:MI:SSXFF'),null,'student1@test.com','파이썬 입문 오리지널');
+Insert into C##TEAM4_2.REVIEW (REVIEW_ID,RCONTENT,RATING,CDATE,UDATE,MEMBER_ID,LECTURE_TITLE) values (201,'asdd',5,to_timestamp('21/02/14 20:55:47.000000000','RR/MM/DD HH24:MI:SSXFF'),null,null,'자바');
+Insert into C##TEAM4_2.REVIEW (REVIEW_ID,RCONTENT,RATING,CDATE,UDATE,MEMBER_ID,LECTURE_TITLE) values (221,'잘 가르치세요',5,to_timestamp('21/02/14 21:42:59.000000000','RR/MM/DD HH24:MI:SSXFF'),null,null,'자바 실전');
+Insert into C##TEAM4_2.REVIEW (REVIEW_ID,RCONTENT,RATING,CDATE,UDATE,MEMBER_ID,LECTURE_TITLE) values (222,'ㅇㅋㅇㅋ',5,to_timestamp('21/02/14 21:43:46.000000000','RR/MM/DD HH24:MI:SSXFF'),null,null,'자바 실전');
+Insert into C##TEAM4_2.REVIEW (REVIEW_ID,RCONTENT,RATING,CDATE,UDATE,MEMBER_ID,LECTURE_TITLE) values (281,'dasdasd',5,to_timestamp('21/02/17 15:45:18.000000000','RR/MM/DD HH24:MI:SSXFF'),null,null,'자바 실전');
+Insert into C##TEAM4_2.REVIEW (REVIEW_ID,RCONTENT,RATING,CDATE,UDATE,MEMBER_ID,LECTURE_TITLE) values (241,'잘 가르치심',3,to_timestamp('21/02/15 15:38:18.000000000','RR/MM/DD HH24:MI:SSXFF'),null,null,'자바');
+Insert into C##TEAM4_2.REVIEW (REVIEW_ID,RCONTENT,RATING,CDATE,UDATE,MEMBER_ID,LECTURE_TITLE) values (302,'dasdasdsadd',5,to_timestamp('21/03/16 14:27:34.000000000','RR/MM/DD HH24:MI:SSXFF'),null,null,'자바');
+Insert into C##TEAM4_2.REVIEW (REVIEW_ID,RCONTENT,RATING,CDATE,UDATE,MEMBER_ID,LECTURE_TITLE) values (243,'ㅇㅇ',1,to_timestamp('21/02/15 15:49:56.000000000','RR/MM/DD HH24:MI:SSXFF'),null,null,'자바');
+Insert into C##TEAM4_2.REVIEW (REVIEW_ID,RCONTENT,RATING,CDATE,UDATE,MEMBER_ID,LECTURE_TITLE) values (361,'1시 21분',3,to_timestamp('21/03/18 13:21:53.000000000','RR/MM/DD HH24:MI:SSXFF'),null,'test@test.com','자바');
+REM INSERTING into C##TEAM4_2.VIDEO
+SET DEFINE OFF;
+Insert into C##TEAM4_2.VIDEO (VIDEO_ID,TITLE,CONTENT,CDATE,UDATE,LECTURE_TITLE,FILENAME,SECRET,CHAPTER_ID) values (31,'파이썬 1장','파이썬1',to_timestamp('21/03/11 12:21:31.000000000','RR/MM/DD HH24:MI:SSXFF'),null,'파이썬 입문 오리지널','파이썬1강.mp4','n',2);
+Insert into C##TEAM4_2.VIDEO (VIDEO_ID,TITLE,CONTENT,CDATE,UDATE,LECTURE_TITLE,FILENAME,SECRET,CHAPTER_ID) values (32,'파이썬 2장','파이썬2',to_timestamp('21/03/12 12:22:31.000000000','RR/MM/DD HH24:MI:SSXFF'),null,'파이썬 입문 오리지널','파이썬2강.mp4','y',2);
+Insert into C##TEAM4_2.VIDEO (VIDEO_ID,TITLE,CONTENT,CDATE,UDATE,LECTURE_TITLE,FILENAME,SECRET,CHAPTER_ID) values (33,'파이썬 3장','파이썬3',to_timestamp('21/03/12 12:23:31.000000000','RR/MM/DD HH24:MI:SSXFF'),null,'파이썬 입문 오리지널','파이썬3강.mp4','y',2);
+Insert into C##TEAM4_2.VIDEO (VIDEO_ID,TITLE,CONTENT,CDATE,UDATE,LECTURE_TITLE,FILENAME,SECRET,CHAPTER_ID) values (34,'파이썬 4장','파이썬4',to_timestamp('21/03/13 12:23:31.000000000','RR/MM/DD HH24:MI:SSXFF'),null,'파이썬 입문 오리지널','파이썬4강.mp4','y',4);
+Insert into C##TEAM4_2.VIDEO (VIDEO_ID,TITLE,CONTENT,CDATE,UDATE,LECTURE_TITLE,FILENAME,SECRET,CHAPTER_ID) values (65,'제목테스트중1','본문테스트중1',to_timestamp('21/03/22 11:21:01.000000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/22 13:23:46.000000000','RR/MM/DD HH24:MI:SSXFF'),'자바','테스트중.mp4','y',2);
+Insert into C##TEAM4_2.VIDEO (VIDEO_ID,TITLE,CONTENT,CDATE,UDATE,LECTURE_TITLE,FILENAME,SECRET,CHAPTER_ID) values (66,'제목테스트중2','본문테스트중2',to_timestamp('21/03/22 11:23:35.000000000','RR/MM/DD HH24:MI:SSXFF'),null,'자바','테스트중2.mp4','n',1);
+Insert into C##TEAM4_2.VIDEO (VIDEO_ID,TITLE,CONTENT,CDATE,UDATE,LECTURE_TITLE,FILENAME,SECRET,CHAPTER_ID) values (61,'제목 테스트','본문 테스트',to_timestamp('21/03/22 10:02:06.000000000','RR/MM/DD HH24:MI:SSXFF'),null,'자바','asdsdsd.mp4','n',0);
+Insert into C##TEAM4_2.VIDEO (VIDEO_ID,TITLE,CONTENT,CDATE,UDATE,LECTURE_TITLE,FILENAME,SECRET,CHAPTER_ID) values (67,'제목테스트중3','본문테스트중3',to_timestamp('21/03/22 11:25:32.000000000','RR/MM/DD HH24:MI:SSXFF'),to_timestamp('21/03/22 13:21:25.000000000','RR/MM/DD HH24:MI:SSXFF'),'자바','테스트중3.mp4','y',0);
+Insert into C##TEAM4_2.VIDEO (VIDEO_ID,TITLE,CONTENT,CDATE,UDATE,LECTURE_TITLE,FILENAME,SECRET,CHAPTER_ID) values (62,'제목 테스트','본문 테스트',to_timestamp('21/03/22 10:04:37.000000000','RR/MM/DD HH24:MI:SSXFF'),null,'자바','dasd.mp4','y',0);
+REM INSERTING into C##TEAM4_2.WISH
+SET DEFINE OFF;
+Insert into C##TEAM4_2.WISH (MEMBER_ID,LECTURE_TITLE,UDATE) values ('student1@test.com','자바',to_timestamp('21/03/24 16:28:33.000000000','RR/MM/DD HH24:MI:SSXFF'));
+--------------------------------------------------------
+--  DDL for Index QNA_UPLOAD_FILE_PK
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "C##TEAM4_2"."QNA_UPLOAD_FILE_PK" ON "C##TEAM4_2"."QNA_UPLOAD_FILE" ("FID") 
+  ;
+--------------------------------------------------------
+--  DDL for Index STUDENT_PK
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "C##TEAM4_2"."STUDENT_PK" ON "C##TEAM4_2"."MEMBER" ("MEMBER_ID") 
+  ;
+--------------------------------------------------------
+--  DDL for Index ONLINE_REVIEW_PK
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "C##TEAM4_2"."ONLINE_REVIEW_PK" ON "C##TEAM4_2"."REVIEW" ("REVIEW_ID") 
+  ;
+--------------------------------------------------------
+--  DDL for Index NOTICE_PK
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "C##TEAM4_2"."NOTICE_PK" ON "C##TEAM4_2"."NOTICE" ("NNUM") 
+  ;
+--------------------------------------------------------
+--  DDL for Index ORDERS_PK
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "C##TEAM4_2"."ORDERS_PK" ON "C##TEAM4_2"."ORDERS" ("ORDER_ID") 
+  ;
+--------------------------------------------------------
+--  DDL for Index RESERVATION_PK
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "C##TEAM4_2"."RESERVATION_PK" ON "C##TEAM4_2"."RESERVATION" ("RESERVE_ID") 
+  ;
+--------------------------------------------------------
+--  DDL for Index CALENDAR_PK
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "C##TEAM4_2"."CALENDAR_PK" ON "C##TEAM4_2"."CALENDAR" ("CALENDAR_ID") 
+  ;
+--------------------------------------------------------
+--  DDL for Index NOTICE_CATEGORY_PK
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "C##TEAM4_2"."NOTICE_CATEGORY_PK" ON "C##TEAM4_2"."NOTICE_CATEGORY" ("CID") 
+  ;
+--------------------------------------------------------
+--  DDL for Index NOTICE_UPLOAD_FILE_PK
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "C##TEAM4_2"."NOTICE_UPLOAD_FILE_PK" ON "C##TEAM4_2"."NOTICE_UPLOAD_FILE" ("FID") 
+  ;
+--------------------------------------------------------
+--  DDL for Index NOTICE_CATEGORY_UK1
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "C##TEAM4_2"."NOTICE_CATEGORY_UK1" ON "C##TEAM4_2"."NOTICE_CATEGORY" ("CNAME") 
+  ;
+--------------------------------------------------------
+--  DDL for Index LECTURE_PK
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "C##TEAM4_2"."LECTURE_PK" ON "C##TEAM4_2"."LECTURE" ("LECTURE_TITLE") 
+  ;
+--------------------------------------------------------
+--  DDL for Index BASKET_PK
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "C##TEAM4_2"."BASKET_PK" ON "C##TEAM4_2"."BASKET" ("LECTURE_TITLE", "MEMBER_ID") 
+  ;
+--------------------------------------------------------
+--  DDL for Index VIDEO_PK
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "C##TEAM4_2"."VIDEO_PK" ON "C##TEAM4_2"."VIDEO" ("VIDEO_ID") 
+  ;
+--------------------------------------------------------
+--  DDL for Index QNA_PK
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "C##TEAM4_2"."QNA_PK" ON "C##TEAM4_2"."QNA" ("QNA_NUM") 
+  ;
+--------------------------------------------------------
+--  Constraints for Table NOTICE_UPLOAD_FILE
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."NOTICE_UPLOAD_FILE" MODIFY ("FID" NOT NULL ENABLE);
+  ALTER TABLE "C##TEAM4_2"."NOTICE_UPLOAD_FILE" ADD CONSTRAINT "NOTICE_UPLOAD_FILE_PK" PRIMARY KEY ("FID")
+  USING INDEX  ENABLE;
+--------------------------------------------------------
+--  Constraints for Table QNA
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."QNA" MODIFY ("QNA_NUM" NOT NULL ENABLE);
+  ALTER TABLE "C##TEAM4_2"."QNA" ADD CONSTRAINT "QNA_PK" PRIMARY KEY ("QNA_NUM")
+  USING INDEX  ENABLE;
+--------------------------------------------------------
+--  Constraints for Table RESERVATION
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."RESERVATION" MODIFY ("RESERVE_ID" NOT NULL ENABLE);
+  ALTER TABLE "C##TEAM4_2"."RESERVATION" ADD CONSTRAINT "RESERVATION_PK" PRIMARY KEY ("RESERVE_ID")
+  USING INDEX  ENABLE;
+--------------------------------------------------------
+--  Constraints for Table CALENDAR
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."CALENDAR" MODIFY ("CALENDAR_ID" NOT NULL ENABLE);
+  ALTER TABLE "C##TEAM4_2"."CALENDAR" ADD CONSTRAINT "CALENDAR_PK" PRIMARY KEY ("CALENDAR_ID")
+  USING INDEX  ENABLE;
+--------------------------------------------------------
+--  Constraints for Table NOTICE
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."NOTICE" MODIFY ("NNUM" NOT NULL ENABLE);
+  ALTER TABLE "C##TEAM4_2"."NOTICE" MODIFY ("NTITLE" NOT NULL ENABLE);
+  ALTER TABLE "C##TEAM4_2"."NOTICE" ADD CONSTRAINT "NOTICE_PK" PRIMARY KEY ("NNUM")
+  USING INDEX  ENABLE;
+--------------------------------------------------------
+--  Constraints for Table REVIEW
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."REVIEW" MODIFY ("REVIEW_ID" NOT NULL ENABLE);
+--------------------------------------------------------
+--  Constraints for Table CHAPTER
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."CHAPTER" MODIFY ("CHAPTER_ID" NOT NULL ENABLE);
+--------------------------------------------------------
+--  Constraints for Table VIDEO
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."VIDEO" MODIFY ("VIDEO_ID" NOT NULL ENABLE);
+  ALTER TABLE "C##TEAM4_2"."VIDEO" ADD CONSTRAINT "VIDEO_PK" PRIMARY KEY ("VIDEO_ID")
+  USING INDEX  ENABLE;
+--------------------------------------------------------
+--  Constraints for Table MEMBER
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."MEMBER" MODIFY ("NAME" NOT NULL ENABLE);
+  ALTER TABLE "C##TEAM4_2"."MEMBER" MODIFY ("PW" NOT NULL ENABLE);
+  ALTER TABLE "C##TEAM4_2"."MEMBER" MODIFY ("TEL" NOT NULL ENABLE);
+  ALTER TABLE "C##TEAM4_2"."MEMBER" MODIFY ("MEMBER_ID" NOT NULL ENABLE);
+  ALTER TABLE "C##TEAM4_2"."MEMBER" MODIFY ("NICKNAME" NOT NULL ENABLE);
+--------------------------------------------------------
+--  Constraints for Table QNA_UPLOAD_FILE
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."QNA_UPLOAD_FILE" MODIFY ("FID" NOT NULL ENABLE);
+  ALTER TABLE "C##TEAM4_2"."QNA_UPLOAD_FILE" ADD CONSTRAINT "QNA_UPLOAD_FILE_PK" PRIMARY KEY ("FID")
+  USING INDEX  ENABLE;
+--------------------------------------------------------
+--  Constraints for Table PROGRESS
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."PROGRESS" MODIFY ("PROGRESS" NOT NULL ENABLE);
+  ALTER TABLE "C##TEAM4_2"."PROGRESS" MODIFY ("LECTURE_TITLE" NOT NULL ENABLE);
+  ALTER TABLE "C##TEAM4_2"."PROGRESS" MODIFY ("VIDEO_ID" NOT NULL ENABLE);
+--------------------------------------------------------
+--  Constraints for Table NOTICE_CATEGORY
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."NOTICE_CATEGORY" MODIFY ("CID" NOT NULL ENABLE);
+  ALTER TABLE "C##TEAM4_2"."NOTICE_CATEGORY" MODIFY ("CNAME" NOT NULL ENABLE);
+  ALTER TABLE "C##TEAM4_2"."NOTICE_CATEGORY" MODIFY ("USE_YN" NOT NULL ENABLE);
+  ALTER TABLE "C##TEAM4_2"."NOTICE_CATEGORY" ADD CONSTRAINT "NOTICE_CATEGORY_PK" PRIMARY KEY ("CID")
+  USING INDEX  ENABLE;
+  ALTER TABLE "C##TEAM4_2"."NOTICE_CATEGORY" ADD CONSTRAINT "NOTICE_CATEGORY_CHK1" CHECK (use_yn in ('y', 'n')) ENABLE;
+  ALTER TABLE "C##TEAM4_2"."NOTICE_CATEGORY" ADD CONSTRAINT "NOTICE_CATEGORY_UK1" UNIQUE ("CNAME")
+  USING INDEX  ENABLE;
+--------------------------------------------------------
+--  Constraints for Table ORDERS
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."ORDERS" MODIFY ("ORDER_ID" NOT NULL ENABLE);
+  ALTER TABLE "C##TEAM4_2"."ORDERS" ADD CONSTRAINT "ORDERS_PK" PRIMARY KEY ("ORDER_ID")
+  USING INDEX  ENABLE;
+--------------------------------------------------------
+--  Constraints for Table BASKET
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."BASKET" MODIFY ("LECTURE_TITLE" NOT NULL ENABLE);
+  ALTER TABLE "C##TEAM4_2"."BASKET" MODIFY ("MEMBER_ID" NOT NULL ENABLE);
+  ALTER TABLE "C##TEAM4_2"."BASKET" ADD CONSTRAINT "BASKET_PK" PRIMARY KEY ("LECTURE_TITLE", "MEMBER_ID")
+  USING INDEX  ENABLE;
+--------------------------------------------------------
+--  Constraints for Table LECTURE
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."LECTURE" MODIFY ("LECTURE_TITLE" NOT NULL ENABLE);
+  ALTER TABLE "C##TEAM4_2"."LECTURE" ADD CONSTRAINT "LECTURE_PK" PRIMARY KEY ("LECTURE_TITLE")
+  USING INDEX  ENABLE;
+--------------------------------------------------------
+--  Ref Constraints for Table BASKET
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."BASKET" ADD CONSTRAINT "BASKET_FK1" FOREIGN KEY ("LECTURE_TITLE")
+	  REFERENCES "C##TEAM4_2"."LECTURE" ("LECTURE_TITLE") ENABLE;
+--------------------------------------------------------
+--  Ref Constraints for Table CALENDAR
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."CALENDAR" ADD CONSTRAINT "CALENDAR_FK1" FOREIGN KEY ("LECTURE_TITLE")
+	  REFERENCES "C##TEAM4_2"."LECTURE" ("LECTURE_TITLE") ENABLE;
+--------------------------------------------------------
+--  Ref Constraints for Table CHAPTER
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."CHAPTER" ADD CONSTRAINT "CHAPTER_FK1" FOREIGN KEY ("LECTURE_TITLE")
+	  REFERENCES "C##TEAM4_2"."LECTURE" ("LECTURE_TITLE") ENABLE;
+--------------------------------------------------------
+--  Ref Constraints for Table NOTICE
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."NOTICE" ADD CONSTRAINT "NOTICE_FK2" FOREIGN KEY ("NCATEGORY")
+	  REFERENCES "C##TEAM4_2"."NOTICE_CATEGORY" ("CID") ENABLE;
+--------------------------------------------------------
+--  Ref Constraints for Table NOTICE_UPLOAD_FILE
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."NOTICE_UPLOAD_FILE" ADD CONSTRAINT "NOTICE_UPLOAD_FILE_FK1" FOREIGN KEY ("NNUM")
+	  REFERENCES "C##TEAM4_2"."NOTICE" ("NNUM") ON DELETE CASCADE ENABLE;
+--------------------------------------------------------
+--  Ref Constraints for Table ORDERS
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."ORDERS" ADD CONSTRAINT "ORDERS_FK1" FOREIGN KEY ("LECTURE_TITLE")
+	  REFERENCES "C##TEAM4_2"."LECTURE" ("LECTURE_TITLE") ENABLE;
+--------------------------------------------------------
+--  Ref Constraints for Table QNA
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."QNA" ADD CONSTRAINT "QNA_FK1" FOREIGN KEY ("LECTURE_TITLE")
+	  REFERENCES "C##TEAM4_2"."LECTURE" ("LECTURE_TITLE") ENABLE;
+--------------------------------------------------------
+--  Ref Constraints for Table QNA_UPLOAD_FILE
+--------------------------------------------------------
+
+  ALTER TABLE "C##TEAM4_2"."QNA_UPLOAD_FILE" ADD CONSTRAINT "QNA_UPLOAD_FILE_FK1" FOREIGN KEY ("QNA_NUM")
+	  REFERENCES "C##TEAM4_2"."QNA" ("QNA_NUM") ENABLE;
