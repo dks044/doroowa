@@ -3,4 +3,8 @@
 ## 시연영상   
 https://youtu.be/aQVnRqvgxLw   
 ## 소개파일(ppt)   
-https://docs.google.com/presentation/d/1-mk7CkX1Wq_ICACtAogSdXrBn6APgwY4/edit?usp=sharing&ouid=118364720553370328580&rtpof=true&sd=true
+https://docs.google.com/presentation/d/1-mk7CkX1Wq_ICACtAogSdXrBn6APgwY4/edit?usp=sharing&ouid=118364720553370328580&rtpof=true&sd=true   
+## 기술   
+Frontend : JavaScript, CSS,HTML, BootStrap
+Backend : H2 DATABASE, JAVA, SpringBoot
+Deployment : Spring Tool Suite 4
